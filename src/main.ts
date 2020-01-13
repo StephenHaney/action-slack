@@ -52,6 +52,9 @@ async function run(): Promise<void> {
       case 'cancelled':
         await client.send(await client.cancel(text));
         break;
+      case 'started':
+        await client.send(await client.started(text));
+        break;
       case 'custom':
         /* eslint-disable no-var */
         var payload: IncomingWebhookSendArguments = eval(

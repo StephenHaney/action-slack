@@ -36,6 +36,15 @@ export class Client {
     this.webhook = new IncomingWebhook(webhookUrl);
   }
 
+  async started(text: string) {
+    const template = await this.payloadTemplate();
+    template.attachments[0].color = '#000';
+    template.text += ':rocket: Starting Action\n';
+    template.text += text;
+
+    return template;
+  }
+
   async success(text: string) {
     const template = await this.payloadTemplate();
     template.attachments[0].color = 'good';
