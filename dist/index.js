@@ -10345,7 +10345,7 @@ class Client {
         return __awaiter(this, void 0, void 0, function* () {
             const template = yield this.payloadTemplate();
             template.attachments[0].color = '#000';
-            template.text += ':rocket: Starting Action\n';
+            template.text += ':rocket: Starting Deploy\n';
             template.text += text;
             return template;
         });
@@ -10354,7 +10354,7 @@ class Client {
         return __awaiter(this, void 0, void 0, function* () {
             const template = yield this.payloadTemplate();
             template.attachments[0].color = 'good';
-            template.text += ':white_check_mark: Succeeded GitHub Actions\n';
+            template.text += ':white_check_mark: Deploy Success\n';
             template.text += text;
             return template;
         });
@@ -10364,7 +10364,7 @@ class Client {
             const template = yield this.payloadTemplate();
             template.attachments[0].color = 'danger';
             template.text += this.mentionText(this.with.only_mention_fail);
-            template.text += ':no_entry: Failed GitHub Actions\n';
+            template.text += ':no_entry: Deploy Fail\n';
             template.text += text;
             return template;
         });
@@ -10373,7 +10373,7 @@ class Client {
         return __awaiter(this, void 0, void 0, function* () {
             const template = yield this.payloadTemplate();
             template.attachments[0].color = 'warning';
-            template.text += ':warning: Canceled GitHub Actions\n';
+            template.text += ':warning: Deploy Cancelled\n';
             template.text += text;
             return template;
         });
@@ -10455,7 +10455,7 @@ class Client {
         const { sha } = github.context;
         const { owner, repo } = github.context.repo;
         return {
-            title: 'action',
+            title: 'deploy log',
             value: `<https://github.com/${owner}/${repo}/commit/${sha}/checks|action>`,
             short: true,
         };
