@@ -109,7 +109,6 @@ export class Client {
     const { author } = commit.data.commit;
 
     return [
-      this.repo,
       {
         title: 'message',
         value: commit.data.commit.message,
@@ -122,7 +121,6 @@ export class Client {
         short: true,
       },
       this.action,
-      this.eventName,
       this.ref,
       this.workflow,
     ];
@@ -154,15 +152,15 @@ export class Client {
     const { owner, repo } = github.context.repo;
 
     return {
-      title: 'deploy log',
-      value: `<https://github.com/${owner}/${repo}/commit/${sha}/checks|action>`,
+      title: 'log',
+      value: `<https://github.com/${owner}/${repo}/commit/${sha}/checks|build log>`,
       short: true,
     };
   }
 
   private get eventName() {
     return {
-      title: 'eventName',
+      title: 'event',
       value: github.context.eventName,
       short: true,
     };

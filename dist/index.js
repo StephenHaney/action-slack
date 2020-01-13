@@ -10415,7 +10415,6 @@ class Client {
             const commit = yield this.github.repos.getCommit({ owner, repo, ref: sha });
             const { author } = commit.data.commit;
             return [
-                this.repo,
                 {
                     title: 'message',
                     value: commit.data.commit.message,
@@ -10428,7 +10427,6 @@ class Client {
                     short: true,
                 },
                 this.action,
-                this.eventName,
                 this.ref,
                 this.workflow,
             ];
@@ -10455,14 +10453,14 @@ class Client {
         const { sha } = github.context;
         const { owner, repo } = github.context.repo;
         return {
-            title: 'deploy log',
-            value: `<https://github.com/${owner}/${repo}/commit/${sha}/checks|action>`,
+            title: 'log',
+            value: `<https://github.com/${owner}/${repo}/commit/${sha}/checks|build log>`,
             short: true,
         };
     }
     get eventName() {
         return {
-            title: 'eventName',
+            title: 'event',
             value: github.context.eventName,
             short: true,
         };
