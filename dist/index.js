@@ -10423,7 +10423,7 @@ class Client {
                 this.commit,
                 {
                     title: 'author',
-                    value: `${author.name}<${author.email}>`,
+                    value: `${author.name}`,
                     short: true,
                 },
                 this.action,
@@ -10437,7 +10437,7 @@ class Client {
         const { owner, repo } = github.context.repo;
         return {
             title: 'commit',
-            value: `<https://github.com/${owner}/${repo}/commit/${sha}|${sha}>`,
+            value: `<https://github.com/${owner}/${repo}/commit/${sha}|commit>`,
             short: true,
         };
     }

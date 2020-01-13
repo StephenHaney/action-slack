@@ -117,7 +117,7 @@ export class Client {
       this.commit,
       {
         title: 'author',
-        value: `${author.name}<${author.email}>`,
+        value: `${author.name}`,
         short: true,
       },
       this.action,
@@ -132,7 +132,7 @@ export class Client {
 
     return {
       title: 'commit',
-      value: `<https://github.com/${owner}/${repo}/commit/${sha}|${sha}>`,
+      value: `<https://github.com/${owner}/${repo}/commit/${sha}|commit>`,
       short: true,
     };
   }
