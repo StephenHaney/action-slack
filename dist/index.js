@@ -10406,8 +10406,7 @@ class Client {
                     {
                         color: '',
                         author_name: this.with.author_name,
-                        text: 'this is a test',
-                        // text: commit.data.commit.message,
+                        text: `*Message*\n${commit.data.commit.message}`,
                         fields: [
                             this.logs,
                             {
