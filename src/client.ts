@@ -82,6 +82,13 @@ export class Client {
   private async payloadTemplate() {
     const text = this.mentionText(this.with.mention);
     const { username, icon_emoji, icon_url, channel } = this.with;
+    if (this.github === undefined) {
+      throw Error('Specify secrets.GITHUB_TOKEN');
+    }
+    const { sha } = github.context;
+    const { owner, repo } = github.context.repo;
+    const commit = await this.github.repos.getCommit({ owner, repo, ref: sha });
+    const { author } = commit.data.commit;
 
     return {
       text,
@@ -93,29 +100,16 @@ export class Client {
         {
           color: '',
           author_name: this.with.author_name,
-          ...this.getContent(),
-        },
-      ],
-    };
-  }
-
-  private async getContent() {
-    if (this.github === undefined) {
-      throw Error('Specify secrets.GITHUB_TOKEN');
-    }
-    const { sha } = github.context;
-    const { owner, repo } = github.context.repo;
-    const commit = await this.github.repos.getCommit({ owner, repo, ref: sha });
-    const { author } = commit.data.commit;
-
-    return {
-      text: commit.data.commit.message,
-      fields: [
-        this.logs,
-        {
-          title: 'author',
-          value: `${author.name}`,
-          short: true,
+          text: 'this is a test',
+          // text: commit.data.commit.message,
+          // fields: [
+          //   this.logs,
+          //   {
+          //     title: 'author',
+          //     value: `${author.name}`,
+          //     short: true,
+          //   },
+          // ],
         },
       ],
     };

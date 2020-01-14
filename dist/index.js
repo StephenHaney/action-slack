@@ -10389,20 +10389,6 @@ class Client {
         return __awaiter(this, void 0, void 0, function* () {
             const text = this.mentionText(this.with.mention);
             const { username, icon_emoji, icon_url, channel } = this.with;
-            return {
-                text,
-                username,
-                icon_emoji,
-                icon_url,
-                channel,
-                attachments: [
-                    Object.assign({ color: '', author_name: this.with.author_name }, this.getContent()),
-                ],
-            };
-        });
-    }
-    getContent() {
-        return __awaiter(this, void 0, void 0, function* () {
             if (this.github === undefined) {
                 throw Error('Specify secrets.GITHUB_TOKEN');
             }
@@ -10411,13 +10397,16 @@ class Client {
             const commit = yield this.github.repos.getCommit({ owner, repo, ref: sha });
             const { author } = commit.data.commit;
             return {
-                text: commit.data.commit.message,
-                fields: [
-                    this.logs,
+                text,
+                username,
+                icon_emoji,
+                icon_url,
+                channel,
+                attachments: [
                     {
-                        title: 'author',
-                        value: `${author.name}`,
-                        short: true,
+                        color: '',
+                        author_name: this.with.author_name,
+                        text: 'this is a test',
                     },
                 ],
             };
