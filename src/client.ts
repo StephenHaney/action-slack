@@ -38,7 +38,7 @@ export class Client {
 
   async started(text: string) {
     const template = await this.payloadTemplate();
-    template.attachments[0].color = '#000';
+    // template.attachments[0].color = '#000';
     template.text += ':rocket: Starting Deploy\n';
     template.text += text;
 
@@ -47,7 +47,7 @@ export class Client {
 
   async success(text: string) {
     const template = await this.payloadTemplate();
-    template.attachments[0].color = 'good';
+    // template.attachments[0].color = 'good';
     template.text += ':white_check_mark: Deploy Success\n';
     template.text += text;
 
@@ -56,7 +56,7 @@ export class Client {
 
   async fail(text: string) {
     const template = await this.payloadTemplate();
-    template.attachments[0].color = 'danger';
+    // template.attachments[0].color = 'danger';
     template.text += this.mentionText(this.with.only_mention_fail);
     template.text += ':no_entry: Deploy Fail\n';
     template.text += text;
@@ -66,7 +66,7 @@ export class Client {
 
   async cancel(text: string) {
     const template = await this.payloadTemplate();
-    template.attachments[0].color = 'warning';
+    // template.attachments[0].color = 'warning';
     template.text += ':warning: Deploy Cancelled\n';
     template.text += text;
 
@@ -89,17 +89,11 @@ export class Client {
       icon_emoji,
       icon_url,
       channel,
-      attachments: [
-        {
-          color: '',
-          author_name: this.with.author_name,
-          fields: await this.fields(),
-        },
-      ],
+      blocks: await this.buildBlocks(),
     };
   }
 
-  private async fields() {
+  private async buildBlocks() {
     if (this.github === undefined) {
       throw Error('Specify secrets.GITHUB_TOKEN');
     }
@@ -107,23 +101,33 @@ export class Client {
     const { owner, repo } = github.context.repo;
     const commit = await this.github.repos.getCommit({ owner, repo, ref: sha });
     const { author } = commit.data.commit;
+    const buildLogLink = `<https://github.com/${owner}/${repo}/commit/${sha}/checks|build log>`;
+    const commitLogLink = `<https://github.com/${owner}/${repo}/commit/${sha}|commit on github>`;
 
-    return [
+    const blocks = [
       {
-        title: 'message',
-        value: commit.data.commit.message,
-        short: true,
+        type: 'section',
+        text: {
+          type: 'mrkdown',
+          text: `*Commit Message:*\n${commit.data.commit.message}`,
+        },
       },
-      this.commit,
       {
-        title: 'author',
-        value: `${author.name}`,
-        short: true,
+        type: 'section',
+        fields: [
+          {
+            type: 'mrkdown',
+            text: `*Author*\n${author}`,
+          },
+          {
+            type: 'mrkdown',
+            text: `*Logs*\n${commitLogLink}\n${buildLogLink}\n`,
+          },
+        ],
       },
-      this.action,
-      this.ref,
-      this.workflow,
     ];
+
+    return blocks;
   }
 
   private get commit() {
@@ -143,17 +147,6 @@ export class Client {
     return {
       title: 'repo',
       value: `<https://github.com/${owner}/${repo}|${owner}/${repo}>`,
-      short: true,
-    };
-  }
-
-  private get action() {
-    const { sha } = github.context;
-    const { owner, repo } = github.context.repo;
-
-    return {
-      title: 'log',
-      value: `<https://github.com/${owner}/${repo}/commit/${sha}/checks|build log>`,
       short: true,
     };
   }
