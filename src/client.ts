@@ -100,16 +100,16 @@ export class Client {
         {
           color: '',
           author_name: this.with.author_name,
-          text: 'this is a test',
+          // text: 'this is a test',
           // text: commit.data.commit.message,
-          // fields: [
-          //   this.logs,
-          //   {
-          //     title: 'author',
-          //     value: `${author.name}`,
-          //     short: true,
-          //   },
-          // ],
+          fields: [
+            this.logs,
+            {
+              title: 'author',
+              value: `${author.name}`,
+              short: true,
+            },
+          ],
         },
       ],
     };
@@ -124,22 +124,6 @@ export class Client {
       value: `<https://github.com/${owner}/${repo}/commit/${sha}/checks|build log>\n<https://github.com/${owner}/${repo}/commit/${sha}|github link>`,
       short: true,
     };
-  }
-
-  private get eventName() {
-    return {
-      title: 'event',
-      value: github.context.eventName,
-      short: true,
-    };
-  }
-
-  private get ref() {
-    return { title: 'ref', value: github.context.ref, short: true };
-  }
-
-  private get workflow() {
-    return { title: 'workflow', value: github.context.workflow, short: true };
   }
 
   private mentionText(mention: string) {

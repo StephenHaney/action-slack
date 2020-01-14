@@ -10406,7 +10406,16 @@ class Client {
                     {
                         color: '',
                         author_name: this.with.author_name,
-                        text: 'this is a test',
+                        // text: 'this is a test',
+                        // text: commit.data.commit.message,
+                        fields: [
+                            this.logs,
+                            {
+                                title: 'author',
+                                value: `${author.name}`,
+                                short: true,
+                            },
+                        ],
                     },
                 ],
             };
@@ -10420,19 +10429,6 @@ class Client {
             value: `<https://github.com/${owner}/${repo}/commit/${sha}/checks|build log>\n<https://github.com/${owner}/${repo}/commit/${sha}|github link>`,
             short: true,
         };
-    }
-    get eventName() {
-        return {
-            title: 'event',
-            value: github.context.eventName,
-            short: true,
-        };
-    }
-    get ref() {
-        return { title: 'ref', value: github.context.ref, short: true };
-    }
-    get workflow() {
-        return { title: 'workflow', value: github.context.workflow, short: true };
     }
     mentionText(mention) {
         const normalized = mention.replace(/ /g, '');
