@@ -90,6 +90,9 @@ export class Client {
     const commit = await this.github.repos.getCommit({ owner, repo, ref: sha });
     const { author } = commit.data.commit;
 
+    const buildLogLink = `<https://github.com/${owner}/${repo}/commit/${sha}/checks|build log>`;
+    const githubLink = `<https://github.com/${owner}/${repo}/commit/${sha}|github link>`;
+
     return {
       text,
       username,
@@ -102,26 +105,19 @@ export class Client {
           author_name: this.with.author_name,
           text: `*Message*\n${commit.data.commit.message}`,
           fields: [
-            this.logs,
             {
-              title: 'author',
+              title: 'Logs',
+              value: `${buildLogLink} | ${githubLink}`,
+              short: true,
+            },
+            {
+              title: 'Author',
               value: `${author.name}`,
               short: true,
             },
           ],
         },
       ],
-    };
-  }
-
-  private get logs() {
-    const { sha } = github.context;
-    const { owner, repo } = github.context.repo;
-
-    return {
-      title: 'logs',
-      value: `<https://github.com/${owner}/${repo}/commit/${sha}/checks|build log>\n<https://github.com/${owner}/${repo}/commit/${sha}|github link>`,
-      short: true,
     };
   }
 
