@@ -3935,16 +3935,16 @@ function run() {
             }, process.env.GITHUB_TOKEN, process.env.SLACK_WEBHOOK_URL);
             switch (status) {
                 case 'success':
-                    yield client.send(yield client.success());
+                    yield client.send(yield client.success(text));
                     break;
                 case 'failure':
-                    yield client.send(yield client.fail());
+                    yield client.send(yield client.fail(text));
                     break;
                 case 'cancelled':
-                    yield client.send(yield client.cancel());
+                    yield client.send(yield client.cancel(text));
                     break;
                 case 'started':
-                    yield client.send(yield client.started());
+                    yield client.send(yield client.started(text));
                     break;
                 case 'custom':
                     /* eslint-disable no-var */
@@ -3958,7 +3958,6 @@ function run() {
         }
         catch (error) {
             core.setFailed(error.message);
-            console.log(error.message);
         }
     });
 }
@@ -10342,40 +10341,40 @@ class Client {
         }
         this.webhook = new webhook_1.IncomingWebhook(webhookUrl);
     }
-    started() {
+    started(text) {
         return __awaiter(this, void 0, void 0, function* () {
             const template = yield this.payloadTemplate();
-            // template.attachments[0].color = '#000';
-            // template.text += ':rocket: Starting Deploy\n';
-            // template.text += text;
+            template.attachments[0].color = '#000';
+            template.text += ':rocket: Starting Deploy\n';
+            template.text += text;
             return template;
         });
     }
-    success() {
+    success(text) {
         return __awaiter(this, void 0, void 0, function* () {
             const template = yield this.payloadTemplate();
-            // template.attachments[0].color = 'good';
-            // template.text += ':white_check_mark: Deploy Success\n';
-            // template.text += text;
+            template.attachments[0].color = 'good';
+            template.text += ':white_check_mark: Deploy Success\n';
+            template.text += text;
             return template;
         });
     }
-    fail() {
+    fail(text) {
         return __awaiter(this, void 0, void 0, function* () {
             const template = yield this.payloadTemplate();
-            // template.attachments[0].color = 'danger';
-            // template.text += this.mentionText(this.with.only_mention_fail);
-            // template.text += ':no_entry: Deploy Fail\n';
-            // template.text += text;
+            template.attachments[0].color = 'danger';
+            template.text += this.mentionText(this.with.only_mention_fail);
+            template.text += ':no_entry: Deploy Fail\n';
+            template.text += text;
             return template;
         });
     }
-    cancel() {
+    cancel(text) {
         return __awaiter(this, void 0, void 0, function* () {
             const template = yield this.payloadTemplate();
-            // template.attachments[0].color = 'warning';
-            // template.text += ':warning: Deploy Cancelled\n';
-            // template.text += text;
+            template.attachments[0].color = 'warning';
+            template.text += ':warning: Deploy Cancelled\n';
+            template.text += text;
             return template;
         });
     }
@@ -10388,19 +10387,21 @@ class Client {
     }
     payloadTemplate() {
         return __awaiter(this, void 0, void 0, function* () {
-            // const text = this.mentionText(this.with.mention);
+            const text = this.mentionText(this.with.mention);
             const { username, icon_emoji, icon_url, channel } = this.with;
             return {
-                // text,
+                text,
                 username,
                 icon_emoji,
                 icon_url,
                 channel,
-                blocks: yield this.buildBlocks(),
+                attachments: [
+                    Object.assign({ color: '', author_name: this.with.author_name }, this.getContent()),
+                ],
             };
         });
     }
-    buildBlocks() {
+    getContent() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.github === undefined) {
                 throw Error('Specify secrets.GITHUB_TOKEN');
@@ -10409,46 +10410,25 @@ class Client {
             const { owner, repo } = github.context.repo;
             const commit = yield this.github.repos.getCommit({ owner, repo, ref: sha });
             const { author } = commit.data.commit;
-            const buildLogLink = `<https://github.com/${owner}/${repo}/commit/${sha}/checks|build log>`;
-            const commitLogLink = `<https://github.com/${owner}/${repo}/commit/${sha}|commit on github>`;
-            return [
-                {
-                    type: 'section',
-                    text: {
-                        type: 'mrkdown',
-                        text: `*Commit Message:*\n${commit.data.commit.message}`,
+            return {
+                text: commit.data.commit.message,
+                fields: [
+                    this.logs,
+                    {
+                        title: 'author',
+                        value: `${author.name}`,
+                        short: true,
                     },
-                },
-                {
-                    type: 'section',
-                    fields: [
-                        {
-                            type: 'mrkdown',
-                            text: `*Author*\n${author}`,
-                        },
-                        {
-                            type: 'mrkdown',
-                            text: `*Logs*\n${commitLogLink}\n${buildLogLink}\n`,
-                        },
-                    ],
-                },
-            ];
+                ],
+            };
         });
     }
-    get commit() {
+    get logs() {
         const { sha } = github.context;
         const { owner, repo } = github.context.repo;
         return {
-            title: 'commit',
-            value: `<https://github.com/${owner}/${repo}/commit/${sha}|commit>`,
-            short: true,
-        };
-    }
-    get repo() {
-        const { owner, repo } = github.context.repo;
-        return {
-            title: 'repo',
-            value: `<https://github.com/${owner}/${repo}|${owner}/${repo}>`,
+            title: 'logs',
+            value: `<https://github.com/${owner}/${repo}/commit/${sha}/checks|build log>\n<https://github.com/${owner}/${repo}/commit/${sha}|github link>`,
             short: true,
         };
     }

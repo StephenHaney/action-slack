@@ -44,16 +44,16 @@ async function run(): Promise<void> {
 
     switch (status) {
       case 'success':
-        await client.send(await client.success());
+        await client.send(await client.success(text));
         break;
       case 'failure':
-        await client.send(await client.fail());
+        await client.send(await client.fail(text));
         break;
       case 'cancelled':
-        await client.send(await client.cancel());
+        await client.send(await client.cancel(text));
         break;
       case 'started':
-        await client.send(await client.started());
+        await client.send(await client.started(text));
         break;
       case 'custom':
         /* eslint-disable no-var */
@@ -70,7 +70,6 @@ async function run(): Promise<void> {
     }
   } catch (error) {
     core.setFailed(error.message);
-    console.log(error.message);
   }
 }
 

@@ -36,39 +36,39 @@ export class Client {
     this.webhook = new IncomingWebhook(webhookUrl);
   }
 
-  async started() {
+  async started(text: string) {
     const template = await this.payloadTemplate();
-    // template.attachments[0].color = '#000';
-    // template.text += ':rocket: Starting Deploy\n';
-    // template.text += text;
+    template.attachments[0].color = '#000';
+    template.text += ':rocket: Starting Deploy\n';
+    template.text += text;
 
     return template;
   }
 
-  async success() {
+  async success(text: string) {
     const template = await this.payloadTemplate();
-    // template.attachments[0].color = 'good';
-    // template.text += ':white_check_mark: Deploy Success\n';
-    // template.text += text;
+    template.attachments[0].color = 'good';
+    template.text += ':white_check_mark: Deploy Success\n';
+    template.text += text;
 
     return template;
   }
 
-  async fail() {
+  async fail(text: string) {
     const template = await this.payloadTemplate();
-    // template.attachments[0].color = 'danger';
-    // template.text += this.mentionText(this.with.only_mention_fail);
-    // template.text += ':no_entry: Deploy Fail\n';
-    // template.text += text;
+    template.attachments[0].color = 'danger';
+    template.text += this.mentionText(this.with.only_mention_fail);
+    template.text += ':no_entry: Deploy Fail\n';
+    template.text += text;
 
     return template;
   }
 
-  async cancel() {
+  async cancel(text: string) {
     const template = await this.payloadTemplate();
-    // template.attachments[0].color = 'warning';
-    // template.text += ':warning: Deploy Cancelled\n';
-    // template.text += text;
+    template.attachments[0].color = 'warning';
+    template.text += ':warning: Deploy Cancelled\n';
+    template.text += text;
 
     return template;
   }
@@ -80,20 +80,26 @@ export class Client {
   }
 
   private async payloadTemplate() {
-    // const text = this.mentionText(this.with.mention);
+    const text = this.mentionText(this.with.mention);
     const { username, icon_emoji, icon_url, channel } = this.with;
 
     return {
-      // text,
+      text,
       username,
       icon_emoji,
       icon_url,
       channel,
-      blocks: await this.buildBlocks(),
+      attachments: [
+        {
+          color: '',
+          author_name: this.with.author_name,
+          ...this.getContent(),
+        },
+      ],
     };
   }
 
-  private async buildBlocks() {
+  private async getContent() {
     if (this.github === undefined) {
       throw Error('Specify secrets.GITHUB_TOKEN');
     }
@@ -101,50 +107,27 @@ export class Client {
     const { owner, repo } = github.context.repo;
     const commit = await this.github.repos.getCommit({ owner, repo, ref: sha });
     const { author } = commit.data.commit;
-    const buildLogLink = `<https://github.com/${owner}/${repo}/commit/${sha}/checks|build log>`;
-    const commitLogLink = `<https://github.com/${owner}/${repo}/commit/${sha}|commit on github>`;
 
-    return [
-      {
-        type: 'section',
-        text: {
-          type: 'mrkdown',
-          text: `*Commit Message:*\n${commit.data.commit.message}`,
+    return {
+      text: commit.data.commit.message,
+      fields: [
+        this.logs,
+        {
+          title: 'author',
+          value: `${author.name}`,
+          short: true,
         },
-      },
-      {
-        type: 'section',
-        fields: [
-          {
-            type: 'mrkdown',
-            text: `*Author*\n${author}`,
-          },
-          {
-            type: 'mrkdown',
-            text: `*Logs*\n${commitLogLink}\n${buildLogLink}\n`,
-          },
-        ],
-      },
-    ];
+      ],
+    };
   }
 
-  private get commit() {
+  private get logs() {
     const { sha } = github.context;
     const { owner, repo } = github.context.repo;
 
     return {
-      title: 'commit',
-      value: `<https://github.com/${owner}/${repo}/commit/${sha}|commit>`,
-      short: true,
-    };
-  }
-
-  private get repo() {
-    const { owner, repo } = github.context.repo;
-
-    return {
-      title: 'repo',
-      value: `<https://github.com/${owner}/${repo}|${owner}/${repo}>`,
+      title: 'logs',
+      value: `<https://github.com/${owner}/${repo}/commit/${sha}/checks|build log>\n<https://github.com/${owner}/${repo}/commit/${sha}|github link>`,
       short: true,
     };
   }
