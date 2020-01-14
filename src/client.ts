@@ -36,39 +36,39 @@ export class Client {
     this.webhook = new IncomingWebhook(webhookUrl);
   }
 
-  async started(text: string) {
+  async started() {
     const template = await this.payloadTemplate();
     // template.attachments[0].color = '#000';
-    template.text += ':rocket: Starting Deploy\n';
-    template.text += text;
+    // template.text += ':rocket: Starting Deploy\n';
+    // template.text += text;
 
     return template;
   }
 
-  async success(text: string) {
+  async success() {
     const template = await this.payloadTemplate();
     // template.attachments[0].color = 'good';
-    template.text += ':white_check_mark: Deploy Success\n';
-    template.text += text;
+    // template.text += ':white_check_mark: Deploy Success\n';
+    // template.text += text;
 
     return template;
   }
 
-  async fail(text: string) {
+  async fail() {
     const template = await this.payloadTemplate();
     // template.attachments[0].color = 'danger';
-    template.text += this.mentionText(this.with.only_mention_fail);
-    template.text += ':no_entry: Deploy Fail\n';
-    template.text += text;
+    // template.text += this.mentionText(this.with.only_mention_fail);
+    // template.text += ':no_entry: Deploy Fail\n';
+    // template.text += text;
 
     return template;
   }
 
-  async cancel(text: string) {
+  async cancel() {
     const template = await this.payloadTemplate();
     // template.attachments[0].color = 'warning';
-    template.text += ':warning: Deploy Cancelled\n';
-    template.text += text;
+    // template.text += ':warning: Deploy Cancelled\n';
+    // template.text += text;
 
     return template;
   }
@@ -80,11 +80,11 @@ export class Client {
   }
 
   private async payloadTemplate() {
-    const text = this.mentionText(this.with.mention);
+    // const text = this.mentionText(this.with.mention);
     const { username, icon_emoji, icon_url, channel } = this.with;
 
     return {
-      text,
+      // text,
       username,
       icon_emoji,
       icon_url,

@@ -3935,16 +3935,16 @@ function run() {
             }, process.env.GITHUB_TOKEN, process.env.SLACK_WEBHOOK_URL);
             switch (status) {
                 case 'success':
-                    yield client.send(yield client.success(text));
+                    yield client.send(yield client.success());
                     break;
                 case 'failure':
-                    yield client.send(yield client.fail(text));
+                    yield client.send(yield client.fail());
                     break;
                 case 'cancelled':
-                    yield client.send(yield client.cancel(text));
+                    yield client.send(yield client.cancel());
                     break;
                 case 'started':
-                    yield client.send(yield client.started(text));
+                    yield client.send(yield client.started());
                     break;
                 case 'custom':
                     /* eslint-disable no-var */
@@ -10342,40 +10342,40 @@ class Client {
         }
         this.webhook = new webhook_1.IncomingWebhook(webhookUrl);
     }
-    started(text) {
+    started() {
         return __awaiter(this, void 0, void 0, function* () {
             const template = yield this.payloadTemplate();
             // template.attachments[0].color = '#000';
-            template.text += ':rocket: Starting Deploy\n';
-            template.text += text;
+            // template.text += ':rocket: Starting Deploy\n';
+            // template.text += text;
             return template;
         });
     }
-    success(text) {
+    success() {
         return __awaiter(this, void 0, void 0, function* () {
             const template = yield this.payloadTemplate();
             // template.attachments[0].color = 'good';
-            template.text += ':white_check_mark: Deploy Success\n';
-            template.text += text;
+            // template.text += ':white_check_mark: Deploy Success\n';
+            // template.text += text;
             return template;
         });
     }
-    fail(text) {
+    fail() {
         return __awaiter(this, void 0, void 0, function* () {
             const template = yield this.payloadTemplate();
             // template.attachments[0].color = 'danger';
-            template.text += this.mentionText(this.with.only_mention_fail);
-            template.text += ':no_entry: Deploy Fail\n';
-            template.text += text;
+            // template.text += this.mentionText(this.with.only_mention_fail);
+            // template.text += ':no_entry: Deploy Fail\n';
+            // template.text += text;
             return template;
         });
     }
-    cancel(text) {
+    cancel() {
         return __awaiter(this, void 0, void 0, function* () {
             const template = yield this.payloadTemplate();
             // template.attachments[0].color = 'warning';
-            template.text += ':warning: Deploy Cancelled\n';
-            template.text += text;
+            // template.text += ':warning: Deploy Cancelled\n';
+            // template.text += text;
             return template;
         });
     }
@@ -10388,10 +10388,10 @@ class Client {
     }
     payloadTemplate() {
         return __awaiter(this, void 0, void 0, function* () {
-            const text = this.mentionText(this.with.mention);
+            // const text = this.mentionText(this.with.mention);
             const { username, icon_emoji, icon_url, channel } = this.with;
             return {
-                text,
+                // text,
                 username,
                 icon_emoji,
                 icon_url,
@@ -10411,7 +10411,7 @@ class Client {
             const { author } = commit.data.commit;
             const buildLogLink = `<https://github.com/${owner}/${repo}/commit/${sha}/checks|build log>`;
             const commitLogLink = `<https://github.com/${owner}/${repo}/commit/${sha}|commit on github>`;
-            const blocks = [
+            return [
                 {
                     type: 'section',
                     text: {
@@ -10433,7 +10433,6 @@ class Client {
                     ],
                 },
             ];
-            return blocks;
         });
     }
     get commit() {
