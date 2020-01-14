@@ -70,6 +70,7 @@ async function run(): Promise<void> {
     }
   } catch (error) {
     core.setFailed(error.message);
+    console.log(error.message);
   }
 }
 

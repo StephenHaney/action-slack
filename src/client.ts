@@ -104,7 +104,7 @@ export class Client {
     const buildLogLink = `<https://github.com/${owner}/${repo}/commit/${sha}/checks|build log>`;
     const commitLogLink = `<https://github.com/${owner}/${repo}/commit/${sha}|commit on github>`;
 
-    const blocks = [
+    return [
       {
         type: 'section',
         text: {
@@ -126,8 +126,6 @@ export class Client {
         ],
       },
     ];
-
-    return blocks;
   }
 
   private get commit() {
