@@ -100,24 +100,14 @@ export class Client {
         {
           color: '',
           author_name: this.with.author_name,
-          blocks: [
+          text: 'this is a test',
+          // text: commit.data.commit.message,
+          fields: [
+            this.logs,
             {
-              type: 'section',
-              text: {
-                type: 'mrkdwn',
-                text: 'Test commit message',
-              },
-            },
-            {
-              type: 'section',
-              fields: [
-                this.logs,
-                {
-                  title: 'author',
-                  value: `${author.name}`,
-                  short: true,
-                },
-              ],
+              title: 'author',
+              value: `${author.name}`,
+              short: true,
             },
           ],
         },
